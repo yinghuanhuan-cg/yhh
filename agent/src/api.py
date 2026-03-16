@@ -48,9 +48,16 @@ async def chat(request: ChatRequest):
     """对话接口
 
     发送消息给 Agent，获取回复。
+    支持 ReAct 多步推理，返回工具调用记录。
     """
-    reply = agent.chat(request.message)
-    return ChatResponse(reply=reply)
+    result = agent.chat_with_detail(request.message)
+    return ChatResponse(
+        reply=result.reply,
+        tool_calls=[
+            {"tool": r.tool_name, "args": r.tool_args, "result": r.result, "step": r.step}
+            for r in result.tool_calls
+        ],
+    )
 
 
 @app.post("/reset")

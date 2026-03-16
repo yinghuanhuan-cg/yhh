@@ -17,9 +17,10 @@ def run_cli():
     config = get_config()
     agent = YHHAgent(config)
 
-    print(f"\n🤖 {config.agent.name} 已启动！")
+    print(f"\n🤖 {config.agent.name} 已启动！(ReAct 模式)")
     print(f"   模型: {config.llm.model_name}")
     print(f"   工具: {', '.join(t.name for t in agent.tools)}")
+    print(f"   最大推理步数: {config.agent.max_iterations}")
     print("   输入 'quit' 退出，输入 'reset' 重置对话\n")
 
     while True:
@@ -35,8 +36,22 @@ def run_cli():
                 print("🔄 对话历史已清除\n")
                 continue
 
-            reply = agent.chat(user_input)
-            print(f"\n🤖 {config.agent.name}: {reply}\n")
+            # 使用详细接口，展示工具调用过程
+            result = agent.chat_with_detail(user_input)
+
+            # 打印工具调用链
+            if result.tool_calls:
+                print()
+                for record in result.tool_calls:
+                    args_str = ", ".join(f'{k}="{v}"' for k, v in record.tool_args.items())
+                    if record.error:
+                        print(f"  ❌ 步骤{record.step} {record.tool_name}({args_str}) → 失败: {record.error}")
+                    else:
+                        # 截断过长的结果显示
+                        display_result = record.result[:80] + "..." if len(record.result) > 80 else record.result
+                        print(f"  🔧 步骤{record.step} {record.tool_name}({args_str}) → {display_result}")
+
+            print(f"\n🤖 {config.agent.name}: {result.reply}\n")
 
         except KeyboardInterrupt:
             print("\n👋 再见！")

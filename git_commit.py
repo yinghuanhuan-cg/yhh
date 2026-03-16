@@ -12,7 +12,9 @@ def run():
             ['git', 'commit', '-m', 'feat(agent): 实现 ReAct Agent Loop，支持多步推理和工具调用'], 
             cwd=repo_path, 
             capture_output=True, 
-            text=True
+            text=True,
+            encoding='utf-8',
+            errors='replace'
         )
         print(result.stdout)
         
@@ -21,7 +23,7 @@ def run():
             return
             
         print("3. 执行 git push")
-        push_result = subprocess.run(['git', 'push'], cwd=repo_path, capture_output=True, text=True)
+        push_result = subprocess.run(['git', 'push'], cwd=repo_path, capture_output=True, text=True, encoding='utf-8', errors='replace')
         print(push_result.stdout)
         if push_result.returncode != 0:
             print(f"Push 失败: {push_result.stderr}")

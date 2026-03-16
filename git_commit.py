@@ -1,5 +1,4 @@
 import subprocess
-import sys
 
 def run():
     repo_path = r'c:\Users\86159\yhh'
@@ -9,7 +8,7 @@ def run():
         
         print("2. 执行 git commit")
         result = subprocess.run(
-            ['git', 'commit', '-m', 'feat(agent): 实现 ReAct Agent Loop，支持多步推理和工具调用'], 
+            ['git', 'commit', '-m', 'docs(agent): 更新 README，添加 ReAct 功能特性说明'], 
             cwd=repo_path, 
             capture_output=True, 
             text=True,
@@ -28,7 +27,7 @@ def run():
         if push_result.returncode != 0:
             print(f"Push 失败: {push_result.stderr}")
         else:
-            print("✅ 代码已成功提交并推送到远程仓库！")
+            print("✅ README 文档已成功更新并推送到远程仓库！")
             
     except Exception as e:
         print(f"发生错误: {e}")
